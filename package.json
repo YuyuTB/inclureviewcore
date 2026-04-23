@@ -1,0 +1,29 @@
+{
+  "name": "@inclureview/core",
+  "version": "0.1.0",
+  "description": "IncluReview Core: AST-based accessibility analysis engine.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@babel/parser": "^7.24.0",
+    "@babel/traverse": "^7.24.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.4.9",
+    "tsx": "^4.21.0",
+    "typescript": "^5.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

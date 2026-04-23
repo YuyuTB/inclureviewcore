@@ -1,0 +1,105 @@
+# IncluReview Source Available License
+
+Version 1.0
+
+Licensor: IncluReview  
+Licensed Work: IncluReview Core (the “Software”)  
+Copyright (c) 2026 IncluReview
+
+---
+
+## 1. Definitions
+
+- Software: IncluReview Core, including source code, rules engine, and related components in this repository.
+- Service: Any hosted, managed, or cloud-based product that provides functionality to third parties using the Software.
+- Derivative Work: Any modified version of the Software.
+
+---
+
+## 2. Grant of Rights
+
+You are granted a worldwide, non-exclusive, non-transferable license to:
+
+- Use the Software for personal use
+- Use the Software within your organization for internal purposes, including commercial use
+- Modify the Software for internal use
+- Integrate the Software into private systems, tooling, and workflows
+- Run the Software in development, testing, or production environments for internal use
+
+---
+
+## 3. Restrictions
+
+You may NOT:
+
+### 3.1 SaaS / Hosted Competition Restriction
+
+Use the Software, or any Derivative Work, to provide a Service that:
+
+- offers accessibility analysis, code scanning, or rule-based analysis functionality to third parties
+- or provides substantially similar functionality to IncluReview SaaS
+- or uses the Software as the primary engine of a competing hosted or managed product
+
+---
+
+### 3.2 Competitive Replication Restriction
+
+Create, offer, or distribute any product or service that is substantially similar to or directly competitive with IncluReview SaaS, based on or derived from the Software.
+
+---
+
+### 3.3 Circumvention Restriction
+
+You may not:
+
+- rebrand, wrap, or embed the Software into a hosted service to bypass these restrictions
+- expose the Software as an API, backend service, or remote analysis engine for third parties
+- remove or alter this license to circumvent its intent
+
+---
+
+## 4. Permitted Use Clarification
+
+For avoidance of doubt, the following uses are explicitly allowed:
+
+- Running IncluReview Core in CI/CD pipelines
+- Using the Software to analyze your own codebases
+- Embedding the Software into internal developer tools
+- Building private dashboards or internal reporting systems
+- Extending the Software with private plugins or rule sets
+
+---
+
+## 5. Ownership
+
+This license does not grant ownership of the Software. All rights not explicitly granted are reserved by the Licensor.
+
+---
+
+## 6. Termination
+
+Any violation of this License automatically terminates your rights under it.
+
+Upon termination, you must cease all use of the Software.
+
+---
+
+## 7. Disclaimer
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+
+IN NO EVENT SHALL THE LICENSOR BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM THE USE OR INABILITY TO USE THE SOFTWARE.
+
+---
+
+## 8. Relationship to IncluReview SaaS
+
+This Software is intended to be used as a local or internal analysis engine only.
+
+It is explicitly not licensed for use in competing hosted or managed services that replicate the functionality of IncluReview SaaS.
+
+---
+
+## 9. Change of License
+
+The Licensor reserves the right to publish future versions of this Software under different licensing terms for future releases. Existing versions remain governed by their original license.
