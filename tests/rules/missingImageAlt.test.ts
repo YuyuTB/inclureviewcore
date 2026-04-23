@@ -1,6 +1,6 @@
 import { parse } from "@babel/parser";
 import traverse from "@babel/traverse";
-import { missingImageAlt } from "../../src/rules/missingImageAlt";
+import { missingImageAlt } from "../../src/rules/widget/missingImageAlt";
 
 describe("missingImageAlt rule", () => {
   function getImgOpeningElementPath(ast: any) {

@@ -1,12 +1,12 @@
 import { parse } from "@babel/parser";
 import traverse from "@babel/traverse";
-import { ariaLabelMissing } from "../../src/rules/ariaLabelMissing";
+import { ariaLabelMissing } from "../../src/rules/labeling/ariaLabelMissing";
 
 describe("ariaLabelMissing rule", () => {
   function getOpeningElementPath(ast: any, tag: string) {
     let found = null;
     traverse(ast, {
-      JSXOpeningElement(path) {
+      JSXOpeningElement(path: any) {
         const name = path.get("name");
         if (name.isJSXIdentifier({ name: tag })) {
           found = path;
@@ -25,7 +25,8 @@ describe("ariaLabelMissing rule", () => {
     if (path) {
       const result = ariaLabelMissing(path, "testfile.tsx");
       expect(result).not.toBeNull();
-      expect(result && result.ruleId).toBe("aria_label_missing");
+      const issue = Array.isArray(result) ? result[0] : result;
+      expect(issue && issue.ruleId).toBe("aria_label_missing");
     }
   });
 
@@ -59,7 +60,8 @@ describe("ariaLabelMissing rule", () => {
     if (path) {
       const result = ariaLabelMissing(path, "testfile.tsx");
       expect(result).not.toBeNull();
-      expect(result && result.ruleId).toBe("aria_label_missing");
+      const issue = Array.isArray(result) ? result[0] : result;
+      expect(issue && issue.ruleId).toBe("aria_label_missing");
     }
   });
 });

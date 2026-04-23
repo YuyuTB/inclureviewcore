@@ -1,6 +1,6 @@
 import { parse } from "@babel/parser";
 import traverse from "@babel/traverse";
-import { missingInputLabel } from "../../src/rules/missingInputLabel";
+import { missingInputLabel } from "../../src/rules/labeling/missingInputLabel";
 
 function getInputOpeningElementPath(ast: any) {
   let found = null;

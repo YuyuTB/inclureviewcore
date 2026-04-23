@@ -1,6 +1,6 @@
 import { parse } from "@babel/parser";
 import traverse from "@babel/traverse";
-import { headingStructure } from "../../src/rules/headingStructure";
+import { headingStructure } from "../../src/rules/structure/headingStructure";
 
 describe("headingStructure rule", () => {
   function getAllHeadingPaths(ast: any) {
@@ -29,8 +29,11 @@ describe("headingStructure rule", () => {
       const result = headingStructure(path, "testfile.tsx");
       if (
         result &&
-        result.ruleId === "heading_structure" &&
-        result.message.includes("Multiple")
+        (Array.isArray(result)
+          ? result[0].ruleId === "heading_structure" &&
+            result[0].message.includes("Multiple")
+          : result.ruleId === "heading_structure" &&
+            result.message.includes("Multiple"))
       )
         flagged++;
     }
@@ -46,8 +49,11 @@ describe("headingStructure rule", () => {
       const result = headingStructure(path, "testfile.tsx");
       if (
         result &&
-        result.ruleId === "heading_structure" &&
-        result.message.includes("Skipped")
+        (Array.isArray(result)
+          ? result[0].ruleId === "heading_structure" &&
+            result[0].message.includes("Skipped")
+          : result.ruleId === "heading_structure" &&
+            result.message.includes("Skipped"))
       )
         flagged++;
     }
@@ -63,8 +69,11 @@ describe("headingStructure rule", () => {
       const result = headingStructure(path, "testfile.tsx");
       if (
         result &&
-        result.ruleId === "heading_structure" &&
-        result.message.includes("No <h1>")
+        (Array.isArray(result)
+          ? result[0].ruleId === "heading_structure" &&
+            result[0].message.includes("No <h1>")
+          : result.ruleId === "heading_structure" &&
+            result.message.includes("No <h1>"))
       )
         flagged++;
     }

@@ -1,43 +1,89 @@
 import { Rule } from "../../types/issue/Rule.js";
 import { HeadingStructureRuleReturn } from "../../models/ruleReturn/HeadingStructureRuleReturn.js";
+import { isHTMLElement } from "../../utils/ast/html/htmlNodeUtils.js";
 
-export const headingStructure: Rule = (path: any, file: any) => {
-  if (!path.isJSXOpeningElement()) return null;
-  const namePath = path.get("name");
-  if (!namePath.isJSXIdentifier()) return null;
-  const tag = namePath.node.name;
-  if (!/^h[1-6]$/.test(tag)) return null;
+function getOrInitHeadings(file: string) {
   if (!(globalThis as any).__a11y_headings) {
     (globalThis as any).__a11y_headings = [];
   }
-  const headings = (globalThis as any).__a11y_headings as {
+  return (globalThis as any).__a11y_headings as {
     level: number;
     file: string;
     line: number;
   }[];
-  const level = parseInt(tag[1], 10);
-  const line = path.node.loc?.start.line || 0;
-  const prev = headings.filter((h) => h.file === file).slice(-1)[0];
-  headings.push({ level, file, line });
+}
+
+export const headingStructure: Rule = (path: any, file: string) => {
+  // JSX/Babel
   if (
-    level === 1 &&
-    headings.filter((h) => h.file === file && h.level === 1).length > 1
+    typeof path.isJSXOpeningElement === "function" &&
+    path.isJSXOpeningElement()
   ) {
-    return new HeadingStructureRuleReturn(file, line, { type: "multipleH1" });
+    const namePath = path.get("name");
+    if (!namePath.isJSXIdentifier()) return null;
+    const tag = namePath.node.name;
+    if (!/^h[1-6]$/.test(tag)) return null;
+    const headings = getOrInitHeadings(file);
+    const level = parseInt(tag[1], 10);
+    const line = path.node.loc?.start.line || 0;
+    const prev = headings.filter((h) => h.file === file).slice(-1)[0];
+    headings.push({ level, file, line });
+    if (
+      level === 1 &&
+      headings.filter((h) => h.file === file && h.level === 1).length > 1
+    ) {
+      return new HeadingStructureRuleReturn(file, line, { type: "multipleH1" });
+    }
+    if (prev && level > prev.level + 1) {
+      return new HeadingStructureRuleReturn(file, line, {
+        type: "skippedLevel",
+        prevLevel: prev.level,
+        level,
+      });
+    }
+    if (
+      level !== 1 &&
+      headings.filter((h) => h.file === file && h.level === 1).length === 0 &&
+      headings.filter((h) => h.file === file).length === 1
+    ) {
+      return new HeadingStructureRuleReturn(file, line, { type: "missingH1" });
+    }
+    return null;
   }
-  if (prev && level > prev.level + 1) {
-    return new HeadingStructureRuleReturn(file, line, {
-      type: "skippedLevel",
-      prevLevel: prev.level,
-      level,
-    });
-  }
+
+  // HTML/parse5
   if (
-    level !== 1 &&
-    headings.filter((h) => h.file === file && h.level === 1).length === 0 &&
-    headings.filter((h) => h.file === file).length === 1
+    path.node &&
+    typeof path.node.tagName === "string" &&
+    /^h[1-6]$/.test(path.node.tagName)
   ) {
-    return new HeadingStructureRuleReturn(file, line, { type: "missingH1" });
+    const tag = path.node.tagName;
+    const headings = getOrInitHeadings(file);
+    const level = parseInt(tag[1], 10);
+    const line = path.node.sourceCodeLocation?.startLine || 0;
+    const prev = headings.filter((h) => h.file === file).slice(-1)[0];
+    headings.push({ level, file, line });
+    if (
+      level === 1 &&
+      headings.filter((h) => h.file === file && h.level === 1).length > 1
+    ) {
+      return new HeadingStructureRuleReturn(file, line, { type: "multipleH1" });
+    }
+    if (prev && level > prev.level + 1) {
+      return new HeadingStructureRuleReturn(file, line, {
+        type: "skippedLevel",
+        prevLevel: prev.level,
+        level,
+      });
+    }
+    if (
+      level !== 1 &&
+      headings.filter((h) => h.file === file && h.level === 1).length === 0 &&
+      headings.filter((h) => h.file === file).length === 1
+    ) {
+      return new HeadingStructureRuleReturn(file, line, { type: "missingH1" });
+    }
+    return null;
   }
   return null;
 };

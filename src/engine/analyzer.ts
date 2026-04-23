@@ -1,14 +1,25 @@
-import { parse } from "@babel/parser";
-import type { NodePath } from "@babel/traverse";
-import * as rules from "./rules/index.js";
-import { Issue } from "./types/issue/Issue.js";
-import { Rule } from "./types/issue/Rule.js";
+import * as rules from "../rules/index.js";
+import { Issue } from "../types/issue/Issue.js";
+import { Rule } from "../types/issue/Rule.js";
+import {
+  findTemplates,
+  isJSFile,
+  isJSXFile,
+  isVueFile,
+  isHTMLFile,
+  extractJSTemplates,
+} from "../utils/ast/predicates/index.js";
+
+import {
+  walkHTML,
+  analyzeHTMLTemplate,
+  analyzeJSXTemplate,
+} from "./templateAnalyzers.js";
 
 /**
  * Analyze a file and return accessibility issues.
  */
 export async function analyze(code: string, file: string): Promise<Issue[]> {
-  let ast;
   let traverse: any;
   try {
     traverse = (await import("@babel/traverse")).default;
@@ -16,51 +27,24 @@ export async function analyze(code: string, file: string): Promise<Issue[]> {
     throw new Error("Failed to load @babel/traverse: " + e);
   }
 
-  try {
-    ast = parse(code, {
-      sourceType: "module",
-      plugins: ["jsx", "typescript"],
-    });
-  } catch (error) {
-    return [
-      {
-        ruleId: "parse_error",
-        severity: "high",
-        file,
-        line: 0,
-        message: "Failed to parse file",
-        fixSuggestion: "Ensure the file contains valid syntax",
-      },
-    ];
+  const templates = await findTemplates(file, code);
+  if (!templates.length) {
+    return [];
   }
 
   const issues: Issue[] = [];
   const ruleList: Rule[] = Object.values(rules);
 
-  traverse(ast, {
-    enter(path: NodePath) {
-      for (const rule of ruleList) {
-        try {
-          const result = rule(path, file);
-          if (Array.isArray(result)) {
-            issues.push(...result);
-          } else if (result) {
-            issues.push(result);
-          }
-        } catch (err) {
-          // fail-safe: a rule should never crash the engine
-          issues.push({
-            ruleId: "rule_error",
-            severity: "low",
-            file,
-            line: path.node.loc?.start.line || 0,
-            message: `Rule execution failed`,
-            fixSuggestion: "Check rule implementation",
-          });
-        }
-      }
-    },
-  });
+  for (const template of templates) {
+    const isAngularLike =
+      file.endsWith(".ts") &&
+      extractJSTemplates(code).some((t) => t === template);
+    if (isAngularLike || isHTMLFile(file) || isVueFile(file)) {
+      await analyzeHTMLTemplate(template, ruleList, file, issues);
+    } else if (isJSFile(file) || isJSXFile(file)) {
+      await analyzeJSXTemplate(template, ruleList, file, issues, traverse);
+    }
+  }
 
   return issues;
 }

@@ -1,11 +1,11 @@
 import { parse } from "@babel/parser";
 import traverse from "@babel/traverse";
-import { buttonAccessibility } from "../../src/rules/buttonAccessibility";
+import { buttonAccessibility } from "../../src/rules/widget/buttonAccessibility";
 
 function getButtonOpeningElementPath(ast: any) {
   let found = null;
   traverse(ast, {
-    JSXOpeningElement(path) {
+    JSXOpeningElement(path: any) {
       const name = path.get("name");
       if (name.isJSXIdentifier({ name: "button" })) {
         found = path;

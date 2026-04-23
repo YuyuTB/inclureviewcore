@@ -1,6 +1,6 @@
 import { parse } from "@babel/parser";
 import traverse from "@babel/traverse";
-import { colorContrast } from "../../src/rules/colorContrast";
+import { colorContrast } from "../../src/rules/visual/colorContrast";
 
 describe("colorContrast rule", () => {
   function getOpeningElementPath(ast: any, tag: string) {
@@ -25,7 +25,8 @@ describe("colorContrast rule", () => {
     if (path) {
       const result = colorContrast(path, "testfile.tsx");
       expect(result).not.toBeNull();
-      expect(result && result.ruleId).toBe("color_contrast");
+      const issue = Array.isArray(result) ? result[0] : result;
+      expect(issue && issue.ruleId).toBe("color_contrast");
     }
   });
 
@@ -48,7 +49,8 @@ describe("colorContrast rule", () => {
     if (path) {
       const result = colorContrast(path, "testfile.tsx");
       expect(result).not.toBeNull();
-      expect(result && result.ruleId).toBe("color_contrast");
+      const issue = Array.isArray(result) ? result[0] : result;
+      expect(issue && issue.ruleId).toBe("color_contrast");
     }
   });
 
@@ -60,7 +62,8 @@ describe("colorContrast rule", () => {
     if (path) {
       const result = colorContrast(path, "testfile.tsx");
       expect(result).not.toBeNull();
-      expect(result && result.ruleId).toBe("color_contrast");
+      const issue = Array.isArray(result) ? result[0] : result;
+      expect(issue && issue.ruleId).toBe("color_contrast");
     }
   });
 });
