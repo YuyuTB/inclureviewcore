@@ -1,4 +1,4 @@
-import { Severity } from "./Severity";
+import { Severity } from "./Severity.js";
 
 export interface Issue {
   ruleId: string;

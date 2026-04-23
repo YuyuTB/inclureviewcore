@@ -1,8 +1,8 @@
 import { parse } from "@babel/parser";
 import type { NodePath } from "@babel/traverse";
 import * as rules from "./rules/index.js";
-import { Issue } from "./types/Issue.js";
-import { Rule } from "./types/Rule.js";
+import { Issue } from "./types/issue/Issue.js";
+import { Rule } from "./types/issue/Rule.js";
 
 /**
  * Analyze a file and return accessibility issues.

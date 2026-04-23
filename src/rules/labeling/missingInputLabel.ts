@@ -1,12 +1,14 @@
-import { Rule } from "../../types/Rule";
-import { hasAriaLabel, getJSXAttributeValue } from "../../utils/jsx";
-import { findAncestorOfType } from "../../utils/dom";
-import { MissingInputLabelSuggestion } from "../../types/suggestions/MissingInputLabel";
+import { Rule } from "../../types/issue/Rule.js";
+import {
+  hasAriaLabel,
+  getJSXAttributeValue,
+} from "../../utils/ast/jsx/jsxUtils.js";
+import { findAncestorOfType } from "../../utils/ast/dom/domUtils.js";
+import { isJSXInput } from "../../utils/ast/predicates/index.js";
+import { MissingInputLabelRuleReturn } from "../../models/ruleReturn/MissingInputLabelRuleReturn.js";
 
-export const missingInputLabel: Rule = (path, file) => {
-  if (!path.isJSXOpeningElement()) return null;
-  const namePath = path.get("name");
-  if (!namePath.isJSXIdentifier({ name: "input" })) return null;
+export const missingInputLabel: Rule = (path: any, file: any) => {
+  if (!isJSXInput(path)) return null;
   const parent = path.parentPath?.parentPath;
   if (parent && parent.node && parent.node.type === "JSXElement") {
     const label = parent.node.openingElement.name;
@@ -17,13 +19,13 @@ export const missingInputLabel: Rule = (path, file) => {
   if (hasAriaLabel(path.node.attributes)) return null;
   const inputId =
     path.node.attributes
-      .map((attr) => getJSXAttributeValue(attr, "id"))
-      .find((val) => !!val) || null;
+      .map((attr: any) => getJSXAttributeValue(attr, "id"))
+      .find((val: any) => !!val) || null;
   if (inputId) {
     if (parent && parent.node && parent.node.type === "JSXElement") {
       const htmlFor = parent.node.openingElement.attributes
-        .map((attr) => getJSXAttributeValue(attr, "htmlFor"))
-        .find((val) => val === inputId);
+        .map((attr: any) => getJSXAttributeValue(attr, "htmlFor"))
+        .find((val: any) => val === inputId);
       if (htmlFor) return null;
     }
     const fragment = findAncestorOfType(path, "JSXFragment");
@@ -45,5 +47,5 @@ export const missingInputLabel: Rule = (path, file) => {
       if (found) return null;
     }
   }
-  return new MissingInputLabelSuggestion(file, path.node.loc?.start.line || 0);
+  return new MissingInputLabelRuleReturn(file, path.node.loc?.start.line || 0);
 };

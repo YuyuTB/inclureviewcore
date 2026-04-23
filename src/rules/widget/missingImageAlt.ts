@@ -1,6 +1,6 @@
-import { Rule } from "../../types/Rule";
-import { getJSXAttributeValue } from "../../utils/jsx";
-import { MissingImageAltSuggestion } from "../../types/suggestions/MissingImageAlt";
+import { Rule } from "../../types/Rule.js";
+import { getJSXAttributeValue } from "../../utils/ast/jsx/jsxUtils.js";
+import { MissingImageAltRuleReturn } from "../../models/ruleReturn/MissingImageAltRuleReturn.js";
 
 export const missingImageAlt: Rule = (path, file) => {
   if (!path.isJSXOpeningElement()) return null;
@@ -15,7 +15,7 @@ export const missingImageAlt: Rule = (path, file) => {
     .map((attr) => getJSXAttributeValue(attr, "role"))
     .find((val) => val === "presentation");
   if (!hasAlt && !role) {
-    return new MissingImageAltSuggestion(file, path.node.loc?.start.line || 0);
+    return new MissingImageAltRuleReturn(file, path.node.loc?.start.line || 0);
   }
   return null;
 };

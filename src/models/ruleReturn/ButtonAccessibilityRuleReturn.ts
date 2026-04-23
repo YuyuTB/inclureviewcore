@@ -1,7 +1,7 @@
-import { Issue } from "../Issue";
-import { Severity } from "../Severity";
+import { Issue } from "../../types/issue/Issue.js";
+import { Severity } from "../../types/issue/Severity.js";
 
-export class ButtonAccessibilitySuggestion implements Issue {
+export class ButtonAccessibilityRuleReturn implements Issue {
   ruleId: string;
   severity: Severity;
   message: string;

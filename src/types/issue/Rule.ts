@@ -1,6 +1,6 @@
 import { NodePath } from "@babel/traverse";
 import { Node } from "@babel/types";
-import { Issue } from "./Issue";
+import { Issue } from "./Issue.js";
 
 export type Rule = (
   path: NodePath<Node>,

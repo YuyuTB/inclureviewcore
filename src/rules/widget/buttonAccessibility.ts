@@ -1,9 +1,14 @@
-import { Rule } from "../../types/Rule";
-import { getJSXAttributeValue, hasAriaLabel } from "../../utils/jsx";
-import { findParentJSXElement, findAncestorOfType } from "../../utils/dom";
-import { ButtonAccessibilitySuggestion } from "../../types/suggestions/ButtonAccessibility";
+import { Rule } from "../../types/issue/Rule.js";
+import { getJSXAttributeValue } from "../../utils/ast/jsx/jsxUtils.js";
+import {
+  findParentJSXElement,
+  findAncestorOfType,
+} from "../../utils/ast/dom/domUtils.js";
+import { isJSXButton } from "../../utils/ast/predicates/index.js";
+import { hasAriaLabel } from "../../utils/ast/jsx/jsxUtils.js";
+import { ButtonAccessibilityRuleReturn } from "../../models/ruleReturn/ButtonAccessibilityRuleReturn.js";
 
-export const buttonAccessibility: Rule = (path, file) => {
+export const buttonAccessibility: Rule = (path: any, file: any) => {
   if (!path.isJSXOpeningElement()) return null;
   const namePath = path.get("name");
   if (!namePath.isJSXIdentifier({ name: "button" })) return null;
@@ -25,15 +30,15 @@ export const buttonAccessibility: Rule = (path, file) => {
     });
   }
   if (!hasText && !hasAria) {
-    return new ButtonAccessibilitySuggestion(
+    return new ButtonAccessibilityRuleReturn(
       file,
       path.node.loc?.start.line || 0,
       { type: "missingText" },
     );
   }
   const typeAttr = path.node.attributes
-    .map((attr) => getJSXAttributeValue(attr, "type"))
-    .find((val) => val === "submit" || val === "reset");
+    .map((attr: any) => getJSXAttributeValue(attr, "type"))
+    .find((val: any) => val === "submit" || val === "reset");
   if (typeAttr && (hasText || hasAria)) {
     let ancestor: any = path.parentPath;
     let inForm = false;
@@ -53,7 +58,7 @@ export const buttonAccessibility: Rule = (path, file) => {
       ancestor = ancestor.parentPath;
     }
     if (!inForm) {
-      return new ButtonAccessibilitySuggestion(
+      return new ButtonAccessibilityRuleReturn(
         file,
         path.node.loc?.start.line || 0,
         { type: "typeOutsideForm" },

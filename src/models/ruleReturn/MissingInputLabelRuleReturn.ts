@@ -1,5 +1,5 @@
-import { Issue } from "../Issue";
-import { Severity } from "../Severity";
+import { Issue } from "../../types/issue/Issue.js";
+import { Severity } from "../../types/issue/Severity.js";
 
 const missingInputLabelSuggestion: string = `
     Add a <label> to your input with the 'for' attribute. \n
@@ -7,7 +7,7 @@ const missingInputLabelSuggestion: string = `
     However, a visible label is best for accessibility and should be preferred whenever possible.
 `;
 
-export class MissingInputLabelSuggestion implements Issue {
+export class MissingInputLabelRuleReturn implements Issue {
   ruleId = "missing_input_label";
   severity: Severity = "high";
   message = "Input is missing an associated label";

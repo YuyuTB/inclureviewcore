@@ -1,7 +1,7 @@
-import { Rule } from "../../types/Rule";
-import { HeadingStructureSuggestion } from "../../types/suggestions/HeadingStructure";
+import { Rule } from "../../types/issue/Rule.js";
+import { HeadingStructureRuleReturn } from "../../models/ruleReturn/HeadingStructureRuleReturn.js";
 
-export const headingStructure: Rule = (path, file) => {
+export const headingStructure: Rule = (path: any, file: any) => {
   if (!path.isJSXOpeningElement()) return null;
   const namePath = path.get("name");
   if (!namePath.isJSXIdentifier()) return null;
@@ -23,10 +23,10 @@ export const headingStructure: Rule = (path, file) => {
     level === 1 &&
     headings.filter((h) => h.file === file && h.level === 1).length > 1
   ) {
-    return new HeadingStructureSuggestion(file, line, { type: "multipleH1" });
+    return new HeadingStructureRuleReturn(file, line, { type: "multipleH1" });
   }
   if (prev && level > prev.level + 1) {
-    return new HeadingStructureSuggestion(file, line, {
+    return new HeadingStructureRuleReturn(file, line, {
       type: "skippedLevel",
       prevLevel: prev.level,
       level,
@@ -37,7 +37,7 @@ export const headingStructure: Rule = (path, file) => {
     headings.filter((h) => h.file === file && h.level === 1).length === 0 &&
     headings.filter((h) => h.file === file).length === 1
   ) {
-    return new HeadingStructureSuggestion(file, line, { type: "missingH1" });
+    return new HeadingStructureRuleReturn(file, line, { type: "missingH1" });
   }
   return null;
 };

@@ -1,16 +1,14 @@
-import { Rule } from "../../types/Rule";
-import { getJSXAttributeValue, hasAriaLabel } from "../../utils/jsx";
-import { findParentJSXElement } from "../../utils/dom";
-import { AriaLabelMissingSuggestion } from "../../types/suggestions/AriaLabelMissing";
+import { Rule } from "../../types/issue/Rule.js";
+import { getJSXAttributeValue } from "../../utils/ast/jsx/jsxUtils.js";
+import { findParentJSXElement } from "../../utils/ast/dom/domUtils.js";
+import { isJSXButton, isJSXInput } from "../../utils/ast/predicates/index.js";
+import { hasAriaLabel } from "../../utils/ast/jsx/jsxUtils.js";
+import { AriaLabelMissingRuleReturn } from "../../models/ruleReturn/AriaLabelMissingRuleReturn.js";
+import { JSXOpeningElement } from "@babel/types";
 
 export const ariaLabelMissing: Rule = (path, file) => {
-  if (!path.isJSXOpeningElement()) return null;
-  const namePath = path.get("name");
-  if (!namePath.isJSXIdentifier()) return null;
-  const tag = String(namePath.node.name);
-  if (String(tag) !== "button" && String(tag) !== "input") return null;
-  const hasAria = hasAriaLabel(path.node.attributes);
-  if (String(tag) === "button") {
+  // Check for <button>
+  if (isJSXButton(path)) {
     const buttonElement = findParentJSXElement(path);
     let hasText = false;
     if (
@@ -27,27 +25,34 @@ export const ariaLabelMissing: Rule = (path, file) => {
         );
       });
     }
-    if (!hasText && !hasAria) {
-      return new AriaLabelMissingSuggestion(
+    if (
+      !hasText &&
+      path.node.type === "JSXOpeningElement" &&
+      !hasAriaLabel((path.node as JSXOpeningElement).attributes)
+    ) {
+      return new AriaLabelMissingRuleReturn(
         file,
         path.node.loc?.start.line || 0,
         { tag: "button" },
       );
     }
   }
-  if (String(tag) === "input") {
-    const typeAttr = path.node.attributes
-      .map((attr) => getJSXAttributeValue(attr, "type"))
+  // Check for <input type="button|submit|reset|image">
+  if (isJSXInput(path)) {
+    if (path.node.type !== "JSXOpeningElement") return null;
+    const attributes = (path.node as JSXOpeningElement).attributes;
+    const typeAttr = attributes
+      .map((attr) => getJSXAttributeValue(attr as any, "type"))
       .find((val) =>
         ["button", "submit", "reset", "image"].includes(val || ""),
       );
     if (!typeAttr) return null;
-    const hasValue = path.node.attributes.some((attr) => {
-      const val = getJSXAttributeValue(attr, "value");
+    const hasValue = attributes.some((attr) => {
+      const val = getJSXAttributeValue(attr as any, "value");
       return val && val.trim() !== "";
     });
-    if (!hasValue && !hasAria) {
-      return new AriaLabelMissingSuggestion(
+    if (!hasValue && !hasAriaLabel(attributes)) {
+      return new AriaLabelMissingRuleReturn(
         file,
         path.node.loc?.start.line || 0,
         { tag: "input" },

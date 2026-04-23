@@ -1,12 +1,12 @@
-import { Rule } from "../../types/Rule";
-import { ColorContrastSuggestion } from "../../types/suggestions/ColorContrast";
+import { Rule } from "../../types/issue/Rule.js";
+import { ColorContrastRuleReturn } from "../../models/ruleReturn/ColorContrastRuleReturn.js";
 
-export const colorContrast: Rule = (path, file) => {
+export const colorContrast: Rule = (path: any, file: any) => {
   if (!path.isJSXOpeningElement()) return null;
   const namePath = path.get("name");
   if (!namePath.isJSXIdentifier()) return null;
   const styleAttr = path.node.attributes.find(
-    (attr) =>
+    (attr: any) =>
       attr.type === "JSXAttribute" &&
       attr.name.type === "JSXIdentifier" &&
       attr.name.name === "style" &&
@@ -31,7 +31,7 @@ export const colorContrast: Rule = (path, file) => {
         }
       }
       if (hasColor && hasBg) {
-        return new ColorContrastSuggestion(
+        return new ColorContrastRuleReturn(
           file,
           path.node.loc?.start.line || 0,
         );
@@ -39,13 +39,13 @@ export const colorContrast: Rule = (path, file) => {
     }
   }
   const hasColorAttr = path.node.attributes.some(
-    (attr) =>
+    (attr: any) =>
       attr.type === "JSXAttribute" &&
       attr.name.type === "JSXIdentifier" &&
       (attr.name.name === "color" || attr.name.name === "bgcolor"),
   );
   if (hasColorAttr) {
-    return new ColorContrastSuggestion(file, path.node.loc?.start.line || 0);
+    return new ColorContrastRuleReturn(file, path.node.loc?.start.line || 0);
   }
   return null;
 };
