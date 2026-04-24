@@ -32,13 +32,11 @@ You are granted a worldwide, non-exclusive, non-transferable license to:
 
 You may NOT:
 
-### 3.1 SaaS / Hosted Competition Restriction
+### 3.1 Third-Party/External Use Restriction
 
-Use the Software, or any Derivative Work, to provide a Service that:
+Use the Software, or any Derivative Work, to provide accessibility analysis, code scanning, or rule-based analysis functionality to third parties (i.e., users outside your organization) in any form—including, but not limited to, hosted, managed, SaaS, desktop, CLI, or mobile applications—is strictly prohibited.
 
-- offers accessibility analysis, code scanning, or rule-based analysis functionality to third parties
-- or provides substantially similar functionality to IncluReview SaaS
-- or uses the Software as the primary engine of a competing hosted or managed product
+This includes exposing the Software as a public API, remote analysis engine, or any service for others outside your organization.
 
 ---
 

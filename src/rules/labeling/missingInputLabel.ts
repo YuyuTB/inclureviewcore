@@ -57,6 +57,9 @@ export const missingInputLabel: Rule = (path: any, file: any) => {
     return new MissingInputLabelRuleReturn(
       file,
       path.node.loc?.start.line || 0,
+      path.node.loc?.start.column || 0,
+      path.node.loc?.end?.line,
+      path.node.loc?.end?.column,
     );
   }
 
@@ -84,6 +87,9 @@ export const missingInputLabel: Rule = (path: any, file: any) => {
     return new MissingInputLabelRuleReturn(
       file,
       path.node.sourceCodeLocation?.startLine || 0,
+      path.node.sourceCodeLocation?.startCol || 0,
+      path.node.sourceCodeLocation?.endLine,
+      path.node.sourceCodeLocation?.endCol,
     );
   }
   return null;

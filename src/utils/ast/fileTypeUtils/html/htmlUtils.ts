@@ -5,8 +5,8 @@ import type { DefaultTreeAdapterTypes } from "parse5";
 export function parseHTMLTemplate(
   template: string,
 ): DefaultTreeAdapterTypes.DocumentFragment {
-  // Returns the parsed HTML AST (parse5 format)
-  return parse5.parseFragment(
-    template,
-  ) as DefaultTreeAdapterTypes.DocumentFragment;
+  // Returns the parsed HTML AST (parse5 format) with sourceCodeLocationInfo enabled
+  return parse5.parseFragment(template, {
+    sourceCodeLocationInfo: true,
+  }) as DefaultTreeAdapterTypes.DocumentFragment;
 }

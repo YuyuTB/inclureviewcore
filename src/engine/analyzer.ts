@@ -11,7 +11,6 @@ import {
 } from "../utils/ast/predicates/index.js";
 
 import {
-  walkHTML,
   analyzeHTMLTemplate,
   analyzeJSXTemplate,
 } from "./templateAnalyzers.js";

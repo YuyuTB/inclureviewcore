@@ -41,6 +41,9 @@ export const buttonAccessibility: Rule = (path: any, file: string) => {
       return new ButtonAccessibilityRuleReturn(
         file,
         path.node.loc?.start.line || 0,
+        path.node.loc?.start.column || 0,
+        path.node.loc?.end?.line,
+        path.node.loc?.end?.column,
         { type: "missingText" },
       );
     }
@@ -69,6 +72,9 @@ export const buttonAccessibility: Rule = (path: any, file: string) => {
         return new ButtonAccessibilityRuleReturn(
           file,
           path.node.loc?.start.line || 0,
+          path.node.loc?.start.column || 0,
+          path.node.loc?.end?.line,
+          path.node.loc?.end?.column,
           { type: "typeOutsideForm" },
         );
       }
@@ -91,6 +97,9 @@ export const buttonAccessibility: Rule = (path: any, file: string) => {
       return new ButtonAccessibilityRuleReturn(
         file,
         path.node.sourceCodeLocation?.startLine || 0,
+        path.node.sourceCodeLocation?.startCol || 0,
+        path.node.sourceCodeLocation?.endLine,
+        path.node.sourceCodeLocation?.endCol,
         { type: "missingText" },
       );
     }
@@ -114,6 +123,9 @@ export const buttonAccessibility: Rule = (path: any, file: string) => {
         return new ButtonAccessibilityRuleReturn(
           file,
           path.node.sourceCodeLocation?.startLine || 0,
+          path.node.sourceCodeLocation?.startCol || 0,
+          path.node.sourceCodeLocation?.endLine,
+          path.node.sourceCodeLocation?.endCol,
           { type: "typeOutsideForm" },
         );
       }

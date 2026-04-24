@@ -15,7 +15,9 @@
   "dependencies": {
     "@babel/parser": "^7.24.0",
     "@babel/traverse": "^7.24.0",
-    "@vue/compiler-sfc": "^3.5.33"
+    "@types/parse5": "^6.0.3",
+    "@vue/compiler-sfc": "^3.5.33",
+    "parse5": "^8.0.1"
   },
   "devDependencies": {
     "@types/babel__traverse": "^7.28.0",

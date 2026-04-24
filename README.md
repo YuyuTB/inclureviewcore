@@ -24,3 +24,11 @@ Import and use:
 ```ts
 import { analyze } from "@inclureview/core";
 ```
+
+## Security Notes
+
+- The Core package does not enforce any directory or path restrictions. If you are building an APP using this package, you are responsible for validating and sanitizing file paths as appropriate for your use case.
+
+## Documentation
+
+- See [docs/USAGE.md](docs/USAGE.md) for a complete guide on integrating IncluReview Core into your app, including installation, usage, and best practices.

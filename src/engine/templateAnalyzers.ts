@@ -4,7 +4,7 @@ import { parseHTMLTemplate } from "../utils/ast/fileTypeUtils/html/htmlUtils.js"
 import type { Rule } from "../types/issue/Rule.js";
 import type { Issue } from "../types/issue/Issue.js";
 
-export function walkHTML(
+export function traverseHTMLTree(
   node: any,
   ruleList: Rule[],
   file: string,
@@ -13,13 +13,28 @@ export function walkHTML(
 ) {
   for (const rule of ruleList) {
     try {
+      let loc;
+      if (node.sourceCodeLocation) {
+        loc = {
+          start: {
+            line: node.sourceCodeLocation.startLine,
+            column: node.sourceCodeLocation.startCol,
+          },
+          end: {
+            line: node.sourceCodeLocation.endLine,
+            column: node.sourceCodeLocation.endCol,
+          },
+        };
+      } else {
+        loc = { start: { line: parentLine, column: 0 } };
+      }
       const fakePath = {
         node,
         parent: null,
         parentPath: null,
         nodeType: node.nodeName,
         file,
-        loc: { start: { line: parentLine } },
+        loc,
       };
       const result = rule(fakePath as any, file);
       if (Array.isArray(result)) {
@@ -32,7 +47,10 @@ export function walkHTML(
         ruleId: "rule_error",
         severity: "low",
         file,
-        line: parentLine,
+        startLine: node.sourceCodeLocation?.startLine || parentLine,
+        startColumn: node.sourceCodeLocation?.startCol || 0,
+        endLine: node.sourceCodeLocation?.endLine || parentLine,
+        endColumn: node.sourceCodeLocation?.endCol || 0,
         message: `Rule execution failed (HTML/Vue)`,
         fixSuggestion: "Check rule implementation",
       });
@@ -40,7 +58,7 @@ export function walkHTML(
   }
   if (node.childNodes) {
     for (const child of node.childNodes) {
-      walkHTML(child, ruleList, file, issues, parentLine);
+      traverseHTMLTree(child, ruleList, file, issues, parentLine);
     }
   }
 }
@@ -52,7 +70,7 @@ export async function analyzeHTMLTemplate(
   issues: Issue[],
 ) {
   const fragment = parseHTMLTemplate(template);
-  walkHTML(fragment, ruleList, file, issues, 1);
+  traverseHTMLTree(fragment, ruleList, file, issues, 1);
 }
 
 export async function analyzeJSXTemplate(
@@ -83,7 +101,10 @@ export async function analyzeJSXTemplate(
       ruleId: "parse_error",
       severity: "high",
       file,
-      line: 0,
+      startLine: 0,
+      startColumn: 0,
+      endLine: 0,
+      endColumn: 0,
       message: "Failed to parse template block",
       fixSuggestion: "Ensure the template contains valid syntax",
     });
@@ -104,7 +125,10 @@ export async function analyzeJSXTemplate(
             ruleId: "rule_error",
             severity: "low",
             file,
-            line: path.node.loc?.start.line || 0,
+            startLine: path.node.loc?.start.line || 0,
+            startColumn: path.node.loc?.start.column || 0,
+            endLine: path.node.loc?.end?.line,
+            endColumn: path.node.loc?.end?.column,
             message: `Rule execution failed`,
             fixSuggestion: "Check rule implementation",
           });

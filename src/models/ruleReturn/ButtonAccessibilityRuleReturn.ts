@@ -6,11 +6,26 @@ export class ButtonAccessibilityRuleReturn implements Issue {
   severity: Severity;
   message: string;
   fixSuggestion: string;
+  file: string;
+  startLine: number;
+  startColumn: number;
+  endLine?: number;
+  endColumn?: number;
+  type: "missingText" | "typeOutsideForm";
   constructor(
-    public file: string,
-    public line: number,
+    file: string,
+    startLine: number,
+    startColumn: number,
+    endLine?: number,
+    endColumn?: number,
     opts: { type: "missingText" | "typeOutsideForm" } = { type: "missingText" },
   ) {
+    this.file = file;
+    this.startLine = startLine;
+    this.startColumn = startColumn;
+    this.endLine = endLine;
+    this.endColumn = endColumn;
+    this.type = opts.type;
     if (opts.type === "missingText") {
       this.ruleId = "button_accessibility";
       this.severity = "high";

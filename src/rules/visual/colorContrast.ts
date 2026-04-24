@@ -6,6 +6,7 @@ import {
 } from "../../utils/ast/html/htmlNodeUtils.js";
 
 export const colorContrast: Rule = (path: any, file: any) => {
+  const results: ColorContrastRuleReturn[] = [];
   // JSX/Babel
   if (
     typeof path.isJSXOpeningElement === "function" &&
@@ -13,6 +14,7 @@ export const colorContrast: Rule = (path: any, file: any) => {
   ) {
     const namePath = path.get("name");
     if (!namePath.isJSXIdentifier()) return null;
+    // Check for style attribute with color and backgroundColor
     const styleAttr = path.node.attributes.find(
       (attr: any) =>
         attr.type === "JSXAttribute" &&
@@ -30,55 +32,107 @@ export const colorContrast: Rule = (path: any, file: any) => {
     ) {
       const obj = styleAttr.value.expression;
       if (obj.type === "ObjectExpression") {
-        let hasColor = false;
-        let hasBg = false;
+        let colorValue: string | undefined = undefined;
+        let bgValue: string | undefined = undefined;
         for (const prop of obj.properties) {
           if (
             prop.type === "ObjectProperty" &&
             prop.key.type === "Identifier"
           ) {
-            if (prop.key.name === "color") hasColor = true;
-            if (prop.key.name === "backgroundColor") hasBg = true;
+            if (
+              prop.key.name === "color" &&
+              prop.value.type === "StringLiteral"
+            ) {
+              colorValue = prop.value.value;
+            }
+            if (
+              prop.key.name === "backgroundColor" &&
+              prop.value.type === "StringLiteral"
+            ) {
+              bgValue = prop.value.value;
+            }
           }
         }
-        if (hasColor && hasBg) {
-          return new ColorContrastRuleReturn(
-            file,
-            path.node.loc?.start.line || 0,
+        if (colorValue && bgValue) {
+          results.push(
+            new ColorContrastRuleReturn(
+              file,
+              path.node.loc?.start.line || 0,
+              path.node.loc?.start.column || 0,
+              path.node.loc?.end?.line,
+              path.node.loc?.end?.column,
+              colorValue,
+              bgValue,
+            ),
           );
         }
       }
     }
-    const hasColorAttr = path.node.attributes.some(
-      (attr: any) =>
+    // Check for color/bgcolor attributes
+    path.node.attributes.forEach((attr: any) => {
+      if (
         attr.type === "JSXAttribute" &&
         attr.name.type === "JSXIdentifier" &&
-        (attr.name.name === "color" || attr.name.name === "bgcolor"),
-    );
-    if (hasColorAttr) {
-      return new ColorContrastRuleReturn(file, path.node.loc?.start.line || 0);
-    }
-    return null;
+        (attr.name.name === "color" || attr.name.name === "bgcolor") &&
+        attr.value &&
+        attr.value.type === "StringLiteral"
+      ) {
+        const isColor = attr.name.name === "color";
+        const colorValue = isColor ? attr.value.value : undefined;
+        const bgValue = !isColor ? attr.value.value : undefined;
+        results.push(
+          new ColorContrastRuleReturn(
+            file,
+            path.node.loc?.start.line || 0,
+            path.node.loc?.start.column || 0,
+            path.node.loc?.end?.line,
+            path.node.loc?.end?.column,
+            colorValue,
+            bgValue,
+          ),
+        );
+      }
+    });
+    return results.length ? results : null;
   }
 
   // HTML/parse5
   if (path.node && typeof path.node.tagName === "string") {
-    // Inline style attribute (not parsed, just check for presence)
     const styleAttr = getHTMLAttribute(path.node, "style");
-    // Color and bgcolor attributes
     const colorAttr = getHTMLAttribute(path.node, "color");
     const bgColorAttr = getHTMLAttribute(path.node, "bgcolor");
-    if (
-      (styleAttr &&
-        styleAttr.includes("color") &&
-        styleAttr.includes("background")) ||
-      (colorAttr && bgColorAttr)
-    ) {
-      return new ColorContrastRuleReturn(
-        file,
-        path.node.sourceCodeLocation?.startLine || 0,
+    // Try to extract color/background from style string
+    let fg: string | undefined = undefined;
+    let bg: string | undefined = undefined;
+    if (styleAttr) {
+      // Very basic regex, not a full CSS parser
+      const colorMatch = styleAttr.match(/color\s*:\s*([^;]+)/i);
+      const bgMatch = styleAttr.match(/background(?:-color)?\s*:\s*([^;]+)/i);
+      if (colorMatch) fg = colorMatch[1].trim();
+      if (bgMatch) bg = bgMatch[1].trim();
+    }
+    if ((fg && bg) || (colorAttr && bgColorAttr)) {
+      results.push(
+        new ColorContrastRuleReturn(
+          file,
+          path.node.sourceCodeLocation?.startLine || 0,
+          path.node.sourceCodeLocation?.startCol || 0,
+          path.node.sourceCodeLocation?.endLine,
+          path.node.sourceCodeLocation?.endCol,
+          fg !== null && fg !== undefined
+            ? fg
+            : colorAttr !== null
+              ? colorAttr || undefined
+              : undefined,
+          bg !== null && bg !== undefined
+            ? bg
+            : bgColorAttr !== null
+              ? bgColorAttr || undefined
+              : undefined,
+        ),
       );
     }
+    return results.length ? results : null;
   }
   return null;
 };

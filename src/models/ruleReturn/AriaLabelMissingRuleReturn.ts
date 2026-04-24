@@ -6,11 +6,26 @@ export class AriaLabelMissingRuleReturn implements Issue {
   severity: Severity;
   message: string;
   fixSuggestion: string;
+  file: string;
+  startLine: number;
+  startColumn: number;
+  endLine?: number;
+  endColumn?: number;
+  tag: "button" | "input";
   constructor(
-    public file: string,
-    public line: number,
+    file: string,
+    startLine: number,
+    startColumn: number,
+    endLine?: number,
+    endColumn?: number,
     opts: { tag: "button" | "input" } = { tag: "button" },
   ) {
+    this.file = file;
+    this.startLine = startLine;
+    this.startColumn = startColumn;
+    this.endLine = endLine;
+    this.endColumn = endColumn;
+    this.tag = opts.tag;
     this.ruleId = "aria_label_missing";
     this.severity = "high";
     if (opts.tag === "button") {

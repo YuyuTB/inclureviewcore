@@ -7,8 +7,28 @@ export class ColorContrastRuleReturn implements Issue {
   message =
     "Element sets both color and backgroundColor inline. Contrast not checked.";
   fixSuggestion = "Ensure sufficient color contrast.";
+  file: string;
+  startLine: number;
+  startColumn: number;
+  endLine?: number;
+  endColumn?: number;
+  foregroundColor?: string;
+  backgroundColor?: string;
   constructor(
-    public file: string,
-    public line: number,
-  ) {}
+    file: string,
+    startLine: number,
+    startColumn: number,
+    endLine?: number,
+    endColumn?: number,
+    foregroundColor?: string,
+    backgroundColor?: string,
+  ) {
+    this.file = file;
+    this.startLine = startLine;
+    this.startColumn = startColumn;
+    this.endLine = endLine;
+    this.endColumn = endColumn;
+    this.foregroundColor = foregroundColor;
+    this.backgroundColor = backgroundColor;
+  }
 }

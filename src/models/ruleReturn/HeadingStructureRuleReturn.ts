@@ -6,15 +6,34 @@ export class HeadingStructureRuleReturn implements Issue {
   severity: Severity;
   message: string;
   fixSuggestion: string;
+  file: string;
+  startLine: number;
+  startColumn: number;
+  endLine?: number;
+  endColumn?: number;
+  type: "multipleH1" | "skippedLevel" | "missingH1";
+  prevLevel?: number;
+  level?: number;
   constructor(
-    public file: string,
-    public line: number,
+    file: string,
+    startLine: number,
+    startColumn: number,
+    endLine?: number,
+    endColumn?: number,
     opts: {
       type: "multipleH1" | "skippedLevel" | "missingH1";
       prevLevel?: number;
       level?: number;
     } = { type: "multipleH1" },
   ) {
+    this.file = file;
+    this.startLine = startLine;
+    this.startColumn = startColumn;
+    this.endLine = endLine;
+    this.endColumn = endColumn;
+    this.type = opts.type;
+    this.prevLevel = opts.prevLevel;
+    this.level = opts.level;
     this.ruleId = "heading_structure";
     if (opts.type === "multipleH1") {
       this.severity = "medium";

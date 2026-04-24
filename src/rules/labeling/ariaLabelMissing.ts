@@ -39,6 +39,9 @@ export const ariaLabelMissing: Rule = (path: any, file: string) => {
       return new AriaLabelMissingRuleReturn(
         file,
         path.node.loc?.start.line || 0,
+        path.node.loc?.start.column || 0,
+        path.node.loc?.end?.line,
+        path.node.loc?.end?.column,
         { tag: "button" },
       );
     }
@@ -61,6 +64,9 @@ export const ariaLabelMissing: Rule = (path: any, file: string) => {
       return new AriaLabelMissingRuleReturn(
         file,
         path.node.loc?.start.line || 0,
+        path.node.loc?.start.column || 0,
+        path.node.loc?.end?.line,
+        path.node.loc?.end?.column,
         { tag: "input" },
       );
     }
@@ -79,6 +85,9 @@ export const ariaLabelMissing: Rule = (path: any, file: string) => {
       return new AriaLabelMissingRuleReturn(
         file,
         path.node.sourceCodeLocation?.startLine || 0,
+        path.node.sourceCodeLocation?.startCol || 0,
+        path.node.sourceCodeLocation?.endLine,
+        path.node.sourceCodeLocation?.endCol,
         { tag: "button" },
       );
     }
@@ -92,6 +101,9 @@ export const ariaLabelMissing: Rule = (path: any, file: string) => {
         return new AriaLabelMissingRuleReturn(
           file,
           path.node.sourceCodeLocation?.startLine || 0,
+          path.node.sourceCodeLocation?.startCol || 0,
+          path.node.sourceCodeLocation?.endLine,
+          path.node.sourceCodeLocation?.endCol,
           { tag: "input" },
         );
       }

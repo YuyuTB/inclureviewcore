@@ -32,21 +32,42 @@ export const headingStructure: Rule = (path: any, file: string) => {
       level === 1 &&
       headings.filter((h) => h.file === file && h.level === 1).length > 1
     ) {
-      return new HeadingStructureRuleReturn(file, line, { type: "multipleH1" });
+      return new HeadingStructureRuleReturn(
+        file,
+        path.node.loc?.start.line || 0,
+        path.node.loc?.start.column || 0,
+        path.node.loc?.end?.line,
+        path.node.loc?.end?.column,
+        { type: "multipleH1" },
+      );
     }
     if (prev && level > prev.level + 1) {
-      return new HeadingStructureRuleReturn(file, line, {
-        type: "skippedLevel",
-        prevLevel: prev.level,
-        level,
-      });
+      return new HeadingStructureRuleReturn(
+        file,
+        path.node.loc?.start.line || 0,
+        path.node.loc?.start.column || 0,
+        path.node.loc?.end?.line,
+        path.node.loc?.end?.column,
+        {
+          type: "skippedLevel",
+          prevLevel: prev.level,
+          level,
+        },
+      );
     }
     if (
       level !== 1 &&
       headings.filter((h) => h.file === file && h.level === 1).length === 0 &&
       headings.filter((h) => h.file === file).length === 1
     ) {
-      return new HeadingStructureRuleReturn(file, line, { type: "missingH1" });
+      return new HeadingStructureRuleReturn(
+        file,
+        path.node.loc?.start.line || 0,
+        path.node.loc?.start.column || 0,
+        path.node.loc?.end?.line,
+        path.node.loc?.end?.column,
+        { type: "missingH1" },
+      );
     }
     return null;
   }
@@ -67,21 +88,42 @@ export const headingStructure: Rule = (path: any, file: string) => {
       level === 1 &&
       headings.filter((h) => h.file === file && h.level === 1).length > 1
     ) {
-      return new HeadingStructureRuleReturn(file, line, { type: "multipleH1" });
+      return new HeadingStructureRuleReturn(
+        file,
+        path.node.sourceCodeLocation?.startLine || 0,
+        path.node.sourceCodeLocation?.startCol || 0,
+        path.node.sourceCodeLocation?.endLine,
+        path.node.sourceCodeLocation?.endCol,
+        { type: "multipleH1" },
+      );
     }
     if (prev && level > prev.level + 1) {
-      return new HeadingStructureRuleReturn(file, line, {
-        type: "skippedLevel",
-        prevLevel: prev.level,
-        level,
-      });
+      return new HeadingStructureRuleReturn(
+        file,
+        path.node.sourceCodeLocation?.startLine || 0,
+        path.node.sourceCodeLocation?.startCol || 0,
+        path.node.sourceCodeLocation?.endLine,
+        path.node.sourceCodeLocation?.endCol,
+        {
+          type: "skippedLevel",
+          prevLevel: prev.level,
+          level,
+        },
+      );
     }
     if (
       level !== 1 &&
       headings.filter((h) => h.file === file && h.level === 1).length === 0 &&
       headings.filter((h) => h.file === file).length === 1
     ) {
-      return new HeadingStructureRuleReturn(file, line, { type: "missingH1" });
+      return new HeadingStructureRuleReturn(
+        file,
+        path.node.sourceCodeLocation?.startLine || 0,
+        path.node.sourceCodeLocation?.startCol || 0,
+        path.node.sourceCodeLocation?.endLine,
+        path.node.sourceCodeLocation?.endCol,
+        { type: "missingH1" },
+      );
     }
     return null;
   }
