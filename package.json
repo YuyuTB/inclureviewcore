@@ -2,9 +2,23 @@
   "name": "@inclureview/core",
   "version": "0.1.0",
   "description": "IncluReview Core: AST-based accessibility analysis engine.",
+  "homepage": "https://github.com/YuyuTB/inclureviewcore#readme",
+  "bugs": {
+    "url": "https://github.com/YuyuTB/inclureviewcore/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YuyuTB/inclureviewcore.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "type": "module",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
   "files": [
     "dist"
   ],

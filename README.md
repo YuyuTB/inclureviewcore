@@ -16,7 +16,7 @@ It is free for internal use and self-hosting, but may not be used to create a co
 Install locally in your project:
 
 ```
-npm install ../IncluReviewCore
+npm install @inclureview/core
 ```
 
 Import and use:
